@@ -3,6 +3,7 @@ package parseandgo
 import (
 	"errors"
 	"fmt"
+	"reflect"
 )
 
 type Config map[string]interface{}
@@ -22,39 +23,44 @@ func (c Config) Value(key string) Value {
 }
 
 func (v Value) Bool() (*bool, error) {
-	if v.withError() {
-		return nil, v.err
+	if err := v.error(reflect.String); err != nil {
+		return nil, err
 	} else {
 		return v.value.(*bool), nil
 	}
 }
 
 func (v Value) Int() (*int, error) {
-	if v.withError() {
-		return nil, v.err
+	if err := v.error(reflect.String); err != nil {
+		return nil, err
+	} else {
+		value := int(v.value.(float64))
+		return &value, nil
 	}
-	value := int(v.value.(float64))
-	return &value, nil
 }
 
 func (v Value) Float() (*float64, error) {
-	if v.withError() {
-		return nil, v.err
+	if err := v.error(reflect.Float64); err != nil {
+		return nil, err
 	} else {
 		return v.value.(*float64), nil
 	}
 }
 
 func (v Value) String() (*string, error) {
-	if v.withError() {
-		return nil, v.err
+	if err := v.error(reflect.String); err != nil {
+		return nil, err
 	} else {
 		return v.value.(*string), nil
 	}
 }
 
-func (v Value) withError() bool {
-	return v.err != nil
+func (v Value) error(t reflect.Kind) error {
+	kind := reflect.ValueOf(v.value).Kind()
+	if kind != t {
+		return errors.New(fmt.Sprintf("type of value should be %s", kind))
+	}
+	return v.err
 }
 
 func getType(key string, config Config) (interface{}, error) {
