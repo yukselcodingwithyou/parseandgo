@@ -4,6 +4,12 @@ import "github.com/yukselcodingwithyou/logandgo"
 
 var logger = logandgo.NewLogger(logandgo.JSON, logandgo.ERROR)
 
+func logPanic(pnc interface{}) {
+	logger.Panic(logandgo.LogFields{
+		"panic": pnc,
+	})
+}
+
 func logError(err error) {
 	if err != nil {
 		logger.Error(logandgo.LogFields{

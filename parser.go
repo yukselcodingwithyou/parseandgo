@@ -2,7 +2,6 @@ package parseandgo
 
 type FileType int64
 type AddressType int64
-type Config map[string]interface{}
 
 const (
 	JSON       FileType = 0
