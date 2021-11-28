@@ -1,52 +1,75 @@
 package parseandgo
 
-import "errors"
-
-var ErrKeyNotFound = errors.New("given key not exists in configuration")
+import (
+	"errors"
+	"fmt"
+)
 
 type Config map[string]interface{}
 
-func (c Config) GetValueAsBool(key string) bool {
-	foundKey, err := getType(key, c)
-	if err != nil {
-		logError(err)
-	}
-	return foundKey.(bool)
+type Value struct {
+	value interface{}
+	err   error
 }
 
-func (c Config) GetValueAsInt(key string) int {
-	foundKey, err := getType(key, c)
+func (c Config) Value(key string) Value {
+	foundValue, err := getType(key, c)
 	if err != nil {
 		logError(err)
+		return Value{value: nil, err: err}
 	}
-	return int(foundKey.(float64))
+	return Value{value: foundValue, err: nil}
 }
 
-func (c Config) GetValueAsString(key string) string {
-	foundKey, err := getType(key, c)
-	if err != nil {
-		logError(err)
+func (v Value) Bool() (*bool, error) {
+	if v.withError() {
+		return nil, v.err
+	} else {
+		return v.value.(*bool), nil
 	}
-	return foundKey.(string)
 }
 
-func (c Config) GetValueAsFloat(key string) float64 {
-	foundKey, err := getType(key, c)
-	if err != nil {
-		logError(err)
+func (v Value) Int() (*int, error) {
+	if v.withError() {
+		return nil, v.err
 	}
-	return foundKey.(float64)
+	value := int(v.value.(float64))
+	return &value, nil
 }
 
-func getType(_key string, config Config) (interface{}, error) {
-	for key, value := range config {
-		if key == _key {
-			return value, nil
+func (v Value) Float() (*float64, error) {
+	if v.withError() {
+		return nil, v.err
+	} else {
+		return v.value.(*float64), nil
+	}
+}
+
+func (v Value) String() (*string, error) {
+	if v.withError() {
+		return nil, v.err
+	} else {
+		return v.value.(*string), nil
+	}
+}
+
+func (v Value) withError() bool {
+	return v.err != nil
+}
+
+func getType(key string, config Config) (interface{}, error) {
+	for k, v := range config {
+		if key == k {
+			return v, nil
 		}
-		switch typedValue := value.(type) {
+		switch typedValue := v.(type) {
 		case map[string]interface{}:
-			return getType(_key, typedValue)
+			return getType(k, typedValue)
 		}
 	}
-	return nil, ErrKeyNotFound
+	return nil, errKeyNotFound(key)
+}
+
+func errKeyNotFound(key string) error {
+	return errors.New(fmt.Sprintf("given key %s not exists in configuration", key))
 }
