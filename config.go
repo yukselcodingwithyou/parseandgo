@@ -23,15 +23,16 @@ func (c Config) Value(key string) Value {
 }
 
 func (v Value) Bool() (*bool, error) {
-	if err := v.error(reflect.String); err != nil {
+	if err := v.error(reflect.Bool); err != nil {
 		return nil, err
 	} else {
-		return v.value.(*bool), nil
+		value := v.value.(bool)
+		return &value, nil
 	}
 }
 
 func (v Value) Int() (*int, error) {
-	if err := v.error(reflect.String); err != nil {
+	if err := v.error(reflect.Float64); err != nil {
 		return nil, err
 	} else {
 		value := int(v.value.(float64))
@@ -43,7 +44,8 @@ func (v Value) Float() (*float64, error) {
 	if err := v.error(reflect.Float64); err != nil {
 		return nil, err
 	} else {
-		return v.value.(*float64), nil
+		value := v.value.(float64)
+		return &value, nil
 	}
 }
 
@@ -51,7 +53,8 @@ func (v Value) String() (*string, error) {
 	if err := v.error(reflect.String); err != nil {
 		return nil, err
 	} else {
-		return v.value.(*string), nil
+		value := v.value.(string)
+		return &value, nil
 	}
 }
 
