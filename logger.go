@@ -1,13 +1,18 @@
 package parseandgo
 
-import "github.com/yukselcodingwithyou/logandgo"
+import (
+	"github.com/yukselcodingwithyou/logandgo"
+	"reflect"
+)
 
 var logger = logandgo.NewLogger(logandgo.JSON, logandgo.ERROR)
 
 func logPanic(pnc interface{}) {
-	logger.Panic(logandgo.LogFields{
-		"panic": pnc,
-	})
+	if !isNil(pnc) {
+		logger.Panic(logandgo.LogFields{
+			"panic": pnc,
+		})
+	}
 }
 
 func logError(err error) {
@@ -30,4 +35,8 @@ func couldNotGetConfigurationFromURL(err error) string {
 	panicStatement := "Could not load configuration from given URL."
 	logError(err)
 	return panicStatement
+}
+
+func isNil(v interface{}) bool {
+	return v == nil || (reflect.ValueOf(v).Kind() == reflect.Ptr && reflect.ValueOf(v).IsNil())
 }
