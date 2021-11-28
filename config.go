@@ -19,7 +19,7 @@ func (c Config) GetValueAsInt(key string) int {
 	if err != nil {
 		logError(err)
 	}
-	return foundKey.(int)
+	return int(foundKey.(float64))
 }
 
 func (c Config) GetValueAsString(key string) string {
