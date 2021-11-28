@@ -11,11 +11,6 @@ func (c Config) GetValueAsBool(key string) bool {
 	if err != nil {
 		logError(err)
 	}
-	defer func() {
-		if e := recover(); e != nil {
-			logPanic(e)
-		}
-	}()
 	return foundKey.(bool)
 }
 
@@ -24,11 +19,6 @@ func (c Config) GetValueAsInt(key string) int {
 	if err != nil {
 		logError(err)
 	}
-	defer func() {
-		if e := recover(); e != nil {
-			logPanic(e)
-		}
-	}()
 	return foundKey.(int)
 }
 
@@ -37,11 +27,6 @@ func (c Config) GetValueAsString(key string) string {
 	if err != nil {
 		logError(err)
 	}
-	defer func() {
-		if e := recover(); e != nil {
-			logPanic(e)
-		}
-	}()
 	return foundKey.(string)
 }
 
@@ -50,25 +35,7 @@ func (c Config) GetValueAsFloat(key string) float64 {
 	if err != nil {
 		logError(err)
 	}
-	defer func() {
-		if e := recover(); e != nil {
-			logPanic(e)
-		}
-	}()
 	return foundKey.(float64)
-}
-
-func (c Config) GetValueAsConfig(key string) Config {
-	foundKey, err := getType(key, c)
-	if err != nil {
-		logError(err)
-	}
-	defer func() {
-		if e := recover(); e != nil {
-			logPanic(e)
-		}
-	}()
-	return foundKey.(Config)
 }
 
 func getType(_key string, config Config) (interface{}, error) {
