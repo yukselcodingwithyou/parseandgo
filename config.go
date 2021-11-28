@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"strconv"
 )
 
 type Config map[string]interface{}
@@ -26,13 +27,17 @@ func (v Value) Bool() (*bool, error) {
 		logError(err)
 		return nil, err
 	} else {
-		value := v.value.(bool)
-		return &value, nil
+		value := v.value.(string)
+		boolValue, parseBoolError := strconv.ParseBool(value)
+		if parseBoolError != nil {
+			return nil, errors.New("value cannot be parsed as bool")
+		}
+		return &boolValue, nil
 	}
 }
 
 func (v Value) Int() (*int, error) {
-	if err := v.error(reflect.Float64); err != nil {
+	if err := v.error(reflect.Bool); err != nil {
 		logError(err)
 		return nil, err
 	} else {
@@ -62,9 +67,12 @@ func (v Value) String() (*string, error) {
 }
 
 func (v Value) error(t reflect.Kind) error {
+	if v.value == nil {
+		return errors.New("invalid value: value is <nil>")
+	}
 	kind := reflect.ValueOf(v.value).Kind()
 	if v.err == nil && kind != t {
-		return errors.New(fmt.Sprintf("type of value should be '%s', please use '%s()' function", kind, kind))
+		return errors.New(fmt.Sprintf("type of value should be '%s', please use '%s()' function", t, t))
 	}
 	return v.err
 }
