@@ -77,7 +77,7 @@ func getType(_key string, config Config) (interface{}, error) {
 			return value, nil
 		}
 		switch typedValue := value.(type) {
-		case Config:
+		case map[string]interface{}:
 			return getType(_key, typedValue)
 		}
 	}
