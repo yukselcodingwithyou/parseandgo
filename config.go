@@ -111,7 +111,9 @@ func getType(key string, config Config) (interface{}, error) {
 		case map[string]interface{}:
 			return getType(key, typedValue)
 		case Config:
-			return getType(key, typedValue)
+			if val, ok := v.(Config)[key]; ok {
+				return val, nil
+			}
 		}
 	}
 	return nil, errKeyNotFound(key)
