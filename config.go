@@ -14,8 +14,8 @@ type Value struct {
 	err   error
 }
 
-func (c Config) Value(key string) Value {
-	foundValue, err := getType(key, c)
+func (c Config) Value(key ...string) Value {
+	foundValue, err := getValueFromConfig(c, key)
 	if err != nil {
 		return Value{value: nil, err: err}
 	}
@@ -110,13 +110,26 @@ func getType(key string, config Config) (interface{}, error) {
 		switch typedValue := v.(type) {
 		case map[string]interface{}:
 			return getType(key, typedValue)
-		case Config:
-			if val, ok := v.(Config)[key]; ok {
-				return val, nil
-			}
 		}
 	}
 	return nil, errKeyNotFound(key)
+}
+
+func getValueFromConfig(m Config, ks []string) (val interface{}, err error) {
+	var ok bool
+
+	if len(ks) == 0 {
+		return nil, fmt.Errorf("config needs at least one key")
+	}
+	if val, ok = m[ks[0]]; !ok {
+		return nil, fmt.Errorf("key not found; remaining keys: %v", ks)
+	} else if len(ks) == 1 { // we've reached the final key
+		return val, nil
+	} else if m, ok = val.(Config); !ok {
+		return nil, fmt.Errorf("malformed structure at %#v", val)
+	} else {
+		return getValueFromConfig(m, ks[1:])
+	}
 }
 
 func errKeyNotFound(key string) error {
