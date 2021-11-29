@@ -102,22 +102,8 @@ func (v Value) error() error {
 	return v.err
 }
 
-func getType(key string, config Config) (interface{}, error) {
-	for k, v := range config {
-		if key == k {
-			return v, nil
-		}
-		switch typedValue := v.(type) {
-		case map[string]interface{}:
-			return getType(key, typedValue)
-		}
-	}
-	return nil, errKeyNotFound(key)
-}
-
 func getValueFromConfig(m Config, ks []string) (val interface{}, err error) {
 	var ok bool
-
 	if len(ks) == 0 {
 		return nil, fmt.Errorf("config needs at least one key")
 	}
@@ -125,11 +111,20 @@ func getValueFromConfig(m Config, ks []string) (val interface{}, err error) {
 		return nil, fmt.Errorf("key not found; remaining keys: %v", ks)
 	} else if len(ks) == 1 { // we've reached the final key
 		return val, nil
-	} else if m, ok = val.(Config); !ok {
+	} else if ok = isValueConvertible(val); !ok {
 		return nil, fmt.Errorf("malformed structure at %#v", val)
 	} else {
 		return getValueFromConfig(m, ks[1:])
 	}
+}
+
+func isValueConvertible(val interface{}) bool {
+	_, ok := val.(Config)
+	if !ok {
+		_ = val.(map[string]interface{})
+		return true
+	}
+	return ok
 }
 
 func errKeyNotFound(key string) error {
