@@ -145,7 +145,7 @@ func errKeyNotFound(key string) error {
 }
 
 func errInvalidValueIsNil() error {
-	err := errors.New("invalid value: value is <nil>")
+	err := errors.New("invalid: nil value, key not found")
 	logError(err)
 	return err
 }
