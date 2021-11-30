@@ -114,7 +114,8 @@ func getValueFromConfig(m Config, ks []string) (val interface{}, err error) {
 	} else if ok = isValueConvertible(val); !ok {
 		return nil, fmt.Errorf("malformed structure at %#v", val)
 	} else {
-		return getValueFromConfig(m, ks[1:])
+		c := m[ks[0]].(Config)
+		return getValueFromConfig(c, ks[1:])
 	}
 }
 
