@@ -48,9 +48,12 @@ func (v Value) Int() (*int64, error) {
 		return nil, err
 	} else {
 		switch v.value.(type) {
-		case int:
+		case int64:
 			value := v.value.(int64)
 			return &value, nil
+		case int:
+			valueAsInt64 := int64(v.value.(int))
+			return &valueAsInt64, nil
 		case float64:
 			value := int64(v.value.(float64))
 			return &value, nil
