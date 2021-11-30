@@ -119,11 +119,11 @@ func getValueFromConfig(m Config, ks []string) (val interface{}, err error) {
 	} else {
 		switch _type := m[ks[0]].(type) {
 		case Config:
-			fmt.Println(_type)
 			return getValueFromConfig(m[ks[0]].(Config), ks[1:])
 		case map[string]interface{}:
-			fmt.Println(_type)
 			return getValueFromConfig(m[ks[0]].(map[string]interface{}), ks[1:])
+		default:
+			fmt.Println(_type)
 		}
 	}
 	return nil, errKeyNotFound(ks[len(ks)-1])
