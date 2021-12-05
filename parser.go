@@ -1,5 +1,7 @@
 package parseandgo
 
+import "strings"
+
 type FileType int64
 type AddressType int64
 
@@ -19,7 +21,8 @@ type Parser interface {
 	parse() Config
 }
 
-func NewParser(fileType FileType, address string, addressType AddressType) Parser {
+func NewParser(fileType FileType, address string) Parser {
+	addressType := getAddressType(address)
 	switch fileType {
 	case JSON:
 		return newJSONParser(addressType, address)
@@ -88,4 +91,12 @@ func (pp PropertiesParser) parse() Config {
 
 func newPropertiesParser(addressType AddressType, address string) PropertiesParser {
 	return PropertiesParser{address: address, addressType: addressType}
+}
+
+func getAddressType(address string) AddressType {
+	if strings.HasPrefix(address, "http") {
+		return URL
+	} else {
+		return FILEPATH
+	}
 }
