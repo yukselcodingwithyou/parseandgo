@@ -45,17 +45,17 @@ I will give examples of every format type with url and local file.
 
 - Local File
 
-
-    {
-        "fileFormat": "json",
-        "name": "yuksel",
-        "surname": "ozdemir",
-        "otherInfo": {
-            "age": 26,
-            "city": "Ankara",
-            "student": false
+        
+        {
+            "fileFormat": "json",
+            "name": "yuksel",
+            "surname": "ozdemir",
+            "otherInfo": {
+                "age": 26,
+                "city": "Ankara",
+                "student": false
+            }
         }
-    }
 
 
 - Code Example
@@ -101,48 +101,48 @@ I will give examples of every format type with url and local file.
 - Code Example
 
 
-    yamlParser := configparser.NewParser(configparser.YAML, "https://configserverexample.s3.eu-central-1.amazonaws.com/example.yml")
-    yamlConfig := configparser.Parse(yamlParser)
+        yamlParser := configparser.NewParser(configparser.YAML, "https://configserverexample.s3.eu-central-1.amazonaws.com/example.yml")
+        yamlConfig := configparser.Parse(yamlParser)
+        
+        student, err := yamlConfig.Value("other", "info", "person", "student").Bool()
+        if err == nil {
+          fmt.Println(*student)
+        }
+        age, err := yamlConfig.Value("other", "info", "person", "age").Int()
+        if err == nil {
+          fmt.Println(*age)
+        }
+        city, err := yamlConfig.Value("other", "info", "person", "city").String()
+        if err == nil {
+          fmt.Println(*city)
+        }
+        
+        surname, err := yamlConfig.Value("person", "surname").String()
+        if err == nil {
+          fmt.Println(*surname)
+        }
+        
+        name, err := yamlConfig.Value("person", "name").String()
+        if err == nil {
+          fmt.Println(*name)
+        }
+        
+        fileFormat, err := yamlConfig.Value("file", "format").String()
+        if err == nil {
+          fmt.Println(*fileFormat)
+        }
 
-    student, err := yamlConfig.Value("other", "info", "person", "student").Bool()
-	if err == nil {
-		fmt.Println(*student)
-	}
-	age, err := yamlConfig.Value("other", "info", "person", "age").Int()
-	if err == nil {
-		fmt.Println(*age)
-	}
-	city, err := yamlConfig.Value("other", "info", "person", "city").String()
-	if err == nil {
-		fmt.Println(*city)
-	}
-
-	surname, err := yamlConfig.Value("person", "surname").String()
-	if err == nil {
-		fmt.Println(*surname)
-	}
-
-	name, err := yamlConfig.Value("person", "name").String()
-	if err == nil {
-		fmt.Println(*name)
-	}
-
-	fileFormat, err := yamlConfig.Value("file", "format").String()
-	if err == nil {
-		fmt.Println(*fileFormat)
-	}
-  
 3. PROPERTIES EXAMPLE
 
 - Local File
 
-
-    file.format=properties
-    person.name=yuksel
-    person.surname=ozdemir
-    other.info.person.age=26
-    other.info.person.city=Ankara
-    other.info.person.student=false
+        
+        file.format=properties
+        person.name=yuksel
+        person.surname=ozdemir
+        other.info.person.age=26
+        other.info.person.city=Ankara
+        other.info.person.student=false
     
 
 - Code Example
@@ -184,38 +184,38 @@ I will give examples of every format type with url and local file.
 - URL: `https://configserverexample.s3.eu-central-1.amazonaws.com/example.env`
 
 - Code Example
-
-
-    envParser := configparser.NewParser(configparser.ENV, "https://configserverexample.s3.eu-central-1.amazonaws.com/example.env")
-    envConfig := configparser.Parse(envParser)
-
-    student, err := envConfig.Value("student").Bool()
-	if err == nil {
-		fmt.Println(*student)
-	}
-	age, err := envConfig.Value("age").Int()
-	if err == nil {
-		fmt.Println(*age)
-	}
-	city, err := envConfig.Value("city").String()
-	if err == nil {
-		fmt.Println(*city)
-	}
-
-	surname, err := envConfig.Value("surname").String()
-	if err == nil {
-		fmt.Println(*surname)
-	}
-
-	name, err := config.envConfig("name").String()
-	if err == nil {
-		fmt.Println(*name)
-	}
-
-	fileFormat, err := envConfig.Value("fileFormat").String()
-	if err == nil {
-		fmt.Println(*fileFormat)
-	}
+        
+        
+        envParser := configparser.NewParser(configparser.ENV, "https://configserverexample.s3.eu-central-1.amazonaws.com/example.env")
+        envConfig := configparser.Parse(envParser)
+        
+        student, err := envConfig.Value("student").Bool()
+        if err == nil {
+        fmt.Println(*student)
+        }
+        age, err := envConfig.Value("age").Int()
+        if err == nil {
+        fmt.Println(*age)
+        }
+        city, err := envConfig.Value("city").String()
+        if err == nil {
+        fmt.Println(*city)
+        }
+        
+        surname, err := envConfig.Value("surname").String()
+        if err == nil {
+        fmt.Println(*surname)
+        }
+        
+        name, err := config.envConfig("name").String()
+        if err == nil {
+        fmt.Println(*name)
+        }
+        
+        fileFormat, err := envConfig.Value("fileFormat").String()
+        if err == nil {
+        fmt.Println(*fileFormat)
+        }
 
 
 Supported types for a value in config are listed below:
